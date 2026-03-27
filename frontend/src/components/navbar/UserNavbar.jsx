@@ -21,27 +21,23 @@ const UserNavbar = () => {
       <div className="navbar-container">
         
         {/* Logo */}
-        <Link to="/dashboard" className="navbar-logo">
+        <Link to="/problems" className="navbar-logo">
           <span>🚀</span>
           <span>CodeForge</span>
         </Link>
 
-        {/* Desktop Menu */}
+        {/* Menu */}
         <div className="navbar-menu">
-          <Link to="/dashboard" className="navbar-link">Dashboard</Link>
           <Link to="/problems" className="navbar-link">Problems</Link>
           <Link to="/submissions" className="navbar-link">Submissions</Link>
-          
-          <div className="navbar-divider"></div>
-          
-          <Link to="/behavioral" className="navbar-link">Behavioral</Link>
-          <Link to="/behavioral/my-answers" className="navbar-link">My Answers</Link>
-          <Link to="/behavioral/stats" className="navbar-link">Stats</Link>
         </div>
 
         {/* User Menu */}
         <div className="navbar-user-menu">
-          <div className="navbar-user-info" onClick={() => setMenuOpen(!menuOpen)}>
+          <div
+            className="navbar-user-info"
+            onClick={() => setMenuOpen(!menuOpen)}
+          >
             <span className="user-icon">👤</span>
             <span className="username">{user.username}</span>
             <span className="dropdown-arrow">▼</span>
@@ -49,14 +45,17 @@ const UserNavbar = () => {
 
           {menuOpen && (
             <div className="navbar-dropdown">
-              <button onClick={handleLogout} className="dropdown-item logout-btn">
+              <button
+                onClick={handleLogout}
+                className="dropdown-item logout-btn"
+              >
                 🚪 Logout
               </button>
             </div>
           )}
         </div>
 
-        {/* Mobile Menu Button */}
+        {/* Mobile Toggle (optional, not used now) */}
         <button className="navbar-toggle">☰</button>
       </div>
     </nav>

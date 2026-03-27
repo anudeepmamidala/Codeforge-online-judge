@@ -1,0 +1,25 @@
+# ======================
+# Backend (Spring Boot)
+# ======================
+target/
+*.log
+*.class
+
+# ======================
+# Frontend (React/Vite)
+# ======================
+node_modules/
+dist/
+.env
+
+# ======================
+# General
+# ======================
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# OS / temp files
+*.tmp
+*.swp
