@@ -87,7 +87,7 @@ codeforge/
 ### 1. Clone repo
 
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/anudeepmamidala/Codeforge-online-judge.git
 cd codeforge
 ```
 
