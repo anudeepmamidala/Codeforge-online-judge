@@ -35,7 +35,10 @@ public class Problem {
 
     @Column(length = 500)
     private String tags; // comma separated
-
+    
+    @Enumerated(EnumType.STRING)
+    private ValidationType validationType;
+    
     @Column(nullable = false)
     private Boolean isActive = true;
 

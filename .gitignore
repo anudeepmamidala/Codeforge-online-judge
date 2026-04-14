@@ -4,6 +4,10 @@
 target/
 *.log
 *.class
+logs/
+.mvn/
+!mvnw
+!mvnw.cmd
 
 # ======================
 # Frontend (React/Vite)
@@ -11,6 +15,18 @@ target/
 node_modules/
 dist/
 .env
+.env.*
+
+# ======================
+# Shared runtime files
+# ======================
+shared/*
+!shared/.gitkeep
+
+# ======================
+# Docker
+# ======================
+docker-compose.override.yml
 
 # ======================
 # General

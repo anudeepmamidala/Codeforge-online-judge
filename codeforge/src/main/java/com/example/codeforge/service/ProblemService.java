@@ -40,6 +40,14 @@ public class ProblemService {
     public ProblemResponse createProblem(ProblemRequest request) {
         log.info("Creating problem: {}", request.getTitle());
         
+        // Idempotency: if an active problem with same title exists, return it instead of creating duplicate
+        java.util.Optional<Problem> existingOpt = problemRepository.findByTitleAndIsActiveTrue(request.getTitle());
+        if (existingOpt.isPresent()) {
+            Problem existing = existingOpt.get();
+            log.info("Problem with title '{}' already exists (id={}), skipping create", request.getTitle(), existing.getId());
+            return ProblemMapper.toResponse(existing);
+        }
+
         Problem problem = Problem.builder()
                 .title(request.getTitle())
                 .description(request.getDescription())

@@ -26,6 +26,9 @@ public class Submission {
     @JoinColumn(name = "problem_id")
     private Problem problem;
 
+    @Enumerated(EnumType.STRING)
+    private Language language;
+    
     @Column(nullable = false, columnDefinition = "LONGTEXT")
     private String code;
 

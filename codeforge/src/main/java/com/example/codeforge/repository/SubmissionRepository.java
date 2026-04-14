@@ -2,7 +2,11 @@ package com.example.codeforge.repository;
 
 import com.example.codeforge.entity.Submission;
 import com.example.codeforge.entity.SubmissionStatus;
+
+import org.springframework.data.repository.query.Param; // ✅ CORRECT
+
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -21,4 +25,9 @@ public interface SubmissionRepository extends JpaRepository<Submission, Long> {
     long countByUserId(Long userId);
 
     long countByUserIdAndStatus(Long userId, SubmissionStatus status);
+
+    List<Submission> findByProblem_Id(Long problemId);
+
+    @Query("SELECT s FROM Submission s JOIN FETCH s.problem WHERE s.id = :id")
+    Optional<Submission> findWithProblemById(@Param("id") Long id);
 }

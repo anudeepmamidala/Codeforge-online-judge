@@ -56,26 +56,21 @@ public class AuthService {
 
     // ✅ LOGIN
     public AuthResponse login(LoginRequest request) {
-        
-        // Authenticate with username
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.getUsername(),
-                        request.getPassword()
-                )
-        );
+    authenticationManager.authenticate(
+        new UsernamePasswordAuthenticationToken(
+            request.getUsername(),
+            request.getPassword()
+        )
+    );
 
-        // Get user
-        User user = userRepository.findByUsername(request.getUsername())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+    log.info("User authenticated: {}", request.getUsername());
 
-        log.info("User logged in: {}", user.getUsername());
+    User user = userRepository.findByUsername(request.getUsername())
+            .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // Generate token
-        String token = jwtUtil.generateToken(user.getUsername(), user.getRole());
-
-        return new AuthResponse(token, user.getUsername(), user.getRole());
-    }
+    String token = jwtUtil.generateToken(user.getUsername(), user.getRole());
+    return new AuthResponse(token, user.getUsername(), user.getRole());
+}
 
     public UserMeResponse getCurrentUser(String username) {
     User user = userRepository.findByUsername(username)

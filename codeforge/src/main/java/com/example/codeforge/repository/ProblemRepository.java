@@ -16,4 +16,6 @@ public interface ProblemRepository extends JpaRepository<Problem, Long> {
     List<Problem> findByTagsContainingAndIsActiveTrue(String tag);
     
     Optional<Problem> findByIdAndIsActiveTrue(Long id);
+    
+    Optional<Problem> findByTitleAndIsActiveTrue(String title);
 }
