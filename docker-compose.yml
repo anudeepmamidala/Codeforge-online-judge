@@ -64,6 +64,7 @@ services:
       - ./shared:/shared
       - /var/run/docker.sock:/var/run/docker.sock
 
+
   frontend:
     build: ./frontend
     ports:
