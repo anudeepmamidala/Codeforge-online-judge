@@ -29,7 +29,6 @@ public class CodeExecutionUtil {
     private static ExecutionResult runPython(String code, String input, String expectedOutput, String validationType) {
         String jobId = UUID.randomUUID().toString();
         String folder = "job_" + jobId;
-        // Inside the container, we mount the folder directly to /app, so the path is just /app/Main.py
         return runContainer(code, input, expectedOutput, "python:3.9", 
                 new String[]{"python3", "Main.py"}, folder, "Main.py", validationType);
     }
@@ -62,13 +61,11 @@ public class CodeExecutionUtil {
             Files.createDirectories(jobFolder);
             Files.writeString(filePath, code);
 
-            // ✅ Security Fix: Pass folderName to build the specific mount
             String[] dockerCmd = buildDockerCommand(image, command, folderName);
 
             ProcessBuilder pb = new ProcessBuilder(dockerCmd);
             Process process = pb.start();
 
-            // Handle Input Stream
             new Thread(() -> {
                 try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(process.getOutputStream()))) {
                     if (input != null && !input.isBlank()) {
@@ -85,7 +82,7 @@ public class CodeExecutionUtil {
             Thread err = new Thread(() -> { try { stderrBuf.append(read(process.getErrorStream())); } catch (Exception ignored) {} });
             
             out.start(); err.start();
-            boolean finished = process.waitFor(10, TimeUnit.SECONDS); // 10s is safer for your laptop
+            boolean finished = process.waitFor(10, TimeUnit.SECONDS); 
             out.join(); err.join();
 
             String stdout = stdoutBuf.toString();
@@ -119,14 +116,13 @@ public class CodeExecutionUtil {
         String hostPath = System.getenv("HOST_SHARED_PATH");
         if (hostPath == null) hostPath = "/shared";
 
-        // ✅ SECURITY: Only mount the specific job folder to the container's /app
         String specificJobHostPath = hostPath + "/" + folderName;
 
         String[] base = new String[]{
                 "docker", "run", "--rm", "-i",
                 "--memory=128m", "--cpus=0.5", "--pids-limit=64", "--network=none",
                 "-v", specificJobHostPath + ":/app",
-                "-w", "/app", // Set working directory to /app
+                "-w", "/app", 
                 image
         };
 

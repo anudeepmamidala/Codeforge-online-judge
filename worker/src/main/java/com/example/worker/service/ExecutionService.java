@@ -5,7 +5,6 @@ import com.example.worker.repository.SubmissionRepository;
 import com.example.worker.repository.SubmissionResultRepository;
 import com.example.worker.utils.CodeExecutionUtil;
 
-import jakarta.annotation.PostConstruct;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -51,7 +50,7 @@ public class ExecutionService {
             log.debug("Executing testcase {} for submission {}",
                     tc.getId(), submission.getId());
 
-            // 🔥 MULTI-LANGUAGE EXECUTION (FINAL FIX)
+            // 🔥 MULTI-LANGUAGE EXECUTION
             String language = submission.getLanguage() != null
                     ? submission.getLanguage().name()
                     : "PYTHON";
@@ -61,7 +60,7 @@ public class ExecutionService {
                 submission.getCode(),
                 tc.getInput(),
                 tc.getExpectedOutput(),
-                language,           // container-visible path used to write files
+                language,           
                 submission.getProblem().getValidationType() != null
             ? submission.getProblem().getValidationType().name()
             : "EXACT_MATCH"
@@ -75,7 +74,6 @@ log.info("STDOUT: {}", result.stdout());
             log.debug("Testcase {} result: verdict={}, passed={}, time={}ms",
                     tc.getId(), result.verdict(), result.passed(), execTime);
 
-            // 🔥 Verdict handling
             if ("ERROR".equals(result.verdict())) {
                 hasError = true;
                 allPassed = false;
@@ -88,7 +86,6 @@ log.info("STDOUT: {}", result.stdout());
                 passedCount++;
             }
 
-            // ✅ Save testcase result
             SubmissionResult submissionResult = SubmissionResult.builder()
                     .submission(submission)
                     .testcase(tc)
@@ -101,7 +98,6 @@ log.info("STDOUT: {}", result.stdout());
             submissionResultRepository.save(submissionResult);
         }
 
-        // 🔥 FINAL STATUS LOGIC
         if (hasError) {
             submission.setStatus(SubmissionStatus.ERROR);
             submission.setOutput("Runtime Error");

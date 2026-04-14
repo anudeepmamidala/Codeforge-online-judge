@@ -108,7 +108,6 @@ public class WorkerService {
             submissionId = parseSubmissionId(job);
             if (submissionId == null) return;
 
-            // ✅ Check retry count — prevent infinite requeue loop
             String retryKey = "submission:retries:" + submissionId;
             String retryVal = redisTemplate.opsForValue().get(retryKey);
             int retries = retryVal != null ? Integer.parseInt(retryVal) : 0;
@@ -121,7 +120,6 @@ public class WorkerService {
                 return;
             }
 
-            // 🔥 RETRY DB READ (fix race condition)
             Submission submission = null;
 
             for (int i = 0; i < 3; i++) {
@@ -156,7 +154,6 @@ public class WorkerService {
 
             executionService.executeAndSaveResults(submission, testcases);
 
-            // ✅ Clean up retry key on success
             redisTemplate.delete(retryKey);
 
             log.info("Completed submission {}", submissionId);
@@ -164,7 +161,6 @@ public class WorkerService {
         } catch (Exception e) {
             log.error("Error processing job {} → requeueing", job, e);
 
-            // ✅ Increment retry counter before requeueing
             if (submissionId != null) {
                 String retryKey = "submission:retries:" + submissionId;
                 redisTemplate.opsForValue().increment(retryKey);
@@ -173,7 +169,6 @@ public class WorkerService {
 
             markSubmissionError(submissionId, e);
 
-            // 🔥 Requeue — but only if under retry limit (checked next iteration)
             redisTemplate.opsForList().rightPush(QUEUE_NAME, job);
 
             try {
@@ -184,7 +179,6 @@ public class WorkerService {
         }
     }
 
-    // ================= HELPERS =================
     private Long parseSubmissionId(String job) {
         try {
             return Long.parseLong(job.trim());
